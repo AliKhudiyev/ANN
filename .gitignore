@@ -1,0 +1,14 @@
+# Directories
+.vscode/
+obj/
+test/
+log/
+
+# Files
+*.o
+*.log
+*.csv
+main.cpp
+
+# Executables
+main
