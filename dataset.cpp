@@ -80,3 +80,11 @@ void DataSet::print(uint n){
         std::cout<<m_outputSet.m_vals[i][0]<<'\n';
     }
 }
+
+const std::vector<double>& DataSet::get_input(uint index) const{
+    return m_inputSet[index];
+}
+
+const double DataSet::get_output(uint index) const{
+    return m_outputSet[0][index];
+}

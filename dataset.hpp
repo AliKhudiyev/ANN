@@ -23,4 +23,7 @@ class DataSet{
     void one_hot_encode();
     const Shape shape() const;
     void print(uint n=1);
+
+    const std::vector<double>& get_input(uint index) const;
+    const double get_output(uint index) const;
 };

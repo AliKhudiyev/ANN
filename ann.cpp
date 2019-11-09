@@ -94,13 +94,15 @@ void ANN::initialize(double beg, double end){
 
 void ANN::train(DataSet& dataset, uint n_epoch, uint batch_size){
     m_dataSet=&dataset;
+    double error;
     if(batch_size!=-1) m_batchSize=batch_size;
     
     uint n_groups=m_dataSet->shape().n_row/m_batchSize;
     for(uint i=0;i<n_epoch;++i){
         for(uint j=0;j<n_groups;++j){
             for(uint k=0;k<m_batchSize;++k){
-                ;
+                // error=net_output(m_dataSet->get_input(j*batch_size+k))-m_dataSet->get_output(j*batch_size+k);
+                // back_propagate(error);
             }
         }
     }
@@ -110,7 +112,7 @@ void ANN::train(uint n_epoch, uint batch_size){
     train(*m_dataSet, n_epoch, batch_size);
 }
 
-std::string ANN::predict(std::vector<double>& inputs){
+std::string ANN::predict(const std::vector<double>& inputs) const{
     uint index=m_layers.size()-1;
     Perceptron perceptron=m_layers[index].get_perceptron(0);
     double output=perceptron.get_output();
@@ -146,6 +148,7 @@ void ANN::print(LayerType type) const{
     }
     print(index);
 }
+
 void ANN::print_structure() const{
     uint last_index=m_layers.size()-1;
     std::cout<<" ||| Structure:\n";
@@ -166,6 +169,10 @@ void ANN::print_structure() const{
     std::cout<<"\n= = = = = = = = = = = = = =\n";
 }
 
-void ANN::back_propagate(){
+std::vector<double> ANN::net_output(const std::vector<double>& inputs) const{
+    ;
+}
+
+void ANN::back_propagate(double error, uint layer_index){
     ;
 }

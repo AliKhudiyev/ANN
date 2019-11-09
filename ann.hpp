@@ -44,11 +44,12 @@ typedef class ANN{
     void initialize(double beg=-0.01, double end=0.01);
     void train(DataSet& dataset, uint n_epoch, uint batch_size=-1);
     void train(uint n_epoch, uint batch_size=-1);
-    std::string predict(std::vector<double>& inputs);
+    std::string predict(const std::vector<double>& inputs) const;
     void print(uint index) const;
     void print(LayerType type) const;
     void print_structure() const;
     
     private:
-    void back_propagate();
+    std::vector<double> net_output(const std::vector<double>& inputs) const;
+    void back_propagate(double error, uint layer_index=0);
 }NNet, NeuralNet;
