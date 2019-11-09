@@ -1,6 +1,8 @@
 #include "matrix.hpp"
 
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 bool Shape::requal(const Shape& shape) const{
     return (n_row==shape.n_col && n_col==shape.n_row);
@@ -180,4 +182,12 @@ void Matrix::set_shape(uint n_row, uint n_col){
 
 const Shape& Matrix::shape() const{
     return m_shape;
+}
+
+void Matrix::random_init(double beg, double end){
+    for(auto& vec: m_vals){
+        for(auto& val: vec){
+            val=(end-beg)*(double)rand_r(nullptr)/RAND_MAX+beg;
+        }
+    }
 }

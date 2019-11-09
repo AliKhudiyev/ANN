@@ -21,5 +21,6 @@ class DataSet{
     void save();
 
     void one_hot_encode();
+    const Shape shape() const;
     void print(uint n=1);
 };

@@ -66,6 +66,11 @@ void DataSet::one_hot_encode(){
     ;
 }
 
+const Shape DataSet::shape() const{
+    Shape shape{m_inputSet.m_shape.n_row, m_inputSet.m_shape.n_col+1};
+    return shape;
+}
+
 void DataSet::print(uint n){
     std::cout<<"Dataset ["<<m_inputSet.shape()<<"] - ["<<m_outputSet.shape()<<"]: "<<'\n';
     for(uint i=0;i<n;++i){
