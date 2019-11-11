@@ -243,7 +243,7 @@ void ANN::print_structure() const{
     else    std::cout<<"none";
     std::cout<<"\n > Learning rate: "<<m_lr;
     if(m_dataSet){
-        std::cout<<"\n > Dataset already exists:\n";
+        std::cout<<"\n > Dataset already exists (First 5 rows):\n";
         m_dataSet->print(5);
         
     }

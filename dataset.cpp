@@ -5,22 +5,31 @@
 #include <iostream>
 #include <cstdlib>
 
+bool is_word(const std::string& str){
+    for(uint i=0;i<str.size();++i){
+        if((str[i]<'0' || str[i]>'9') && str[i]!='.') return true;
+    }
+    return false;
+}
+
 DataSet::DataSet(const std::string& filepath){
     load(filepath);
 }
 
 DataSet::~DataSet(){}
 
-void DataSet::load(const std::string& filepath, bool auto_read){
+void DataSet::load(const std::string& filepath, uint ignored_lines, bool auto_read){
     m_filePath=filepath;
 
     std::stringstream stream;
     std::string line;
     std::ifstream file(filepath);
 
-    uint dims[2], i=0, j=0;
+    uint dims[2], i=0, j=0, n_lines=0, word_count=0;
+    std::vector<double> inputs;
+    double val;
 
-    if(!auto_read){
+    if(!ignored_lines && !auto_read){
         std::getline(file, line);
         stream<<line;
         while(std::getline(stream, line, ',')){
@@ -36,21 +45,53 @@ void DataSet::load(const std::string& filepath, bool auto_read){
     // std::cout<<" dbg input shape: "<<m_inputSet.shape()<<"; output shape: "<<m_outputSet.shape()<<'\n';
 
     while(std::getline(file, line)){
+        std::stringstream stream;
         stream<<line;
+        // std::cout<<" dbg auto-reading line: "<<stream.str()<<"\n";
+        if(ignored_lines>=++n_lines) continue;
         while(std::getline(stream, line, ',')){
-            if(j<dims[1]-1){
-                // std::cout<<" dbg writing inputSet\n";
-                m_inputSet.m_vals[i][j++]=strtod(line.c_str(), nullptr);
+            if(auto_read){
+                // std::cout<<" > "<<line;
+                if(is_word(line)){
+                    // std::cout<<" +\n";
+                    if(m_map.find(line)==m_map.end()){
+                        // std::cout<<"Not Found!\n";
+                        m_map.insert({line, ++word_count});
+                    }
+                    val=word_count-1;
+                }
+                else{
+                    // std::cout<<" -\n";
+                    val=strtod(line.c_str(), nullptr);
+                }
+                inputs.push_back(val);
             }
             else{
-                // std::cout<<" dbg writing outputSet\n";
-                m_outputSet.m_vals[i++][0]=strtod(line.c_str(), nullptr);
-                j=0;
+                if(j<dims[1]-1){
+                    // std::cout<<" dbg writing inputSet\n";
+                    m_inputSet.m_vals[i][j++]=strtod(line.c_str(), nullptr);
+                }
+                else{
+                    // std::cout<<" dbg writing outputSet\n";
+                    m_outputSet.m_vals[i++][0]=strtod(line.c_str(), nullptr);
+                    j=0;
+                }
             }
         }
-        stream.clear();
+        // std::cout<<"\nClearing stream\n";
+        if(auto_read && ignored_lines<n_lines){
+            // std::cout<<" > pushing the data back\n";
+            std::vector<double> out(1);
+            out[0]=inputs[inputs.size()-1];
+            m_outputSet.m_vals.push_back(out);
+            inputs.erase(inputs.end()-1);
+            m_inputSet.m_vals.push_back(inputs);
+            inputs.clear();
+        }
+        // stream.clear();
     }
 
+    update();
     file.close();
 }
 
@@ -68,10 +109,6 @@ Matrix DataSet::one_hot_encode(double output, uint n){
     encoded.set(0, (int)output)=1;
 
     return encoded;
-}
-
-void DataSet::one_hot_encode(){
-    ;
 }
 
 const Shape DataSet::shape() const{
@@ -132,6 +169,16 @@ void DataSet::print(uint n){
         }
         std::cout<<m_outputSet.m_vals[i][0]<<'\n';
     }
+}
+
+void DataSet::update(){
+    m_inputSet.m_shape.n_row=m_inputSet.m_vals.size();
+    m_inputSet.m_shape.n_col=m_inputSet.m_vals[0].size();
+
+    m_outputSet.m_shape.n_row=m_outputSet.m_vals.size();
+    m_outputSet.m_shape.n_col=m_outputSet.m_vals[0].size();
+
+    // std::cout<<"Updated shape: "<<m_inputSet.m_shape<<'\n';
 }
 
 const std::vector<double>& DataSet::get_input(uint index) const{
