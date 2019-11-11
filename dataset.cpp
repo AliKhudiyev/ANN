@@ -62,6 +62,14 @@ void DataSet::save(){
     save(m_filePath);
 }
 
+Matrix DataSet::one_hot_encode(double output, uint n){
+    Matrix encoded(1,n);
+
+    encoded.set(0, (int)output)=1;
+
+    return encoded;
+}
+
 void DataSet::one_hot_encode(){
     ;
 }
@@ -71,9 +79,54 @@ const Shape DataSet::shape() const{
     return shape;
 }
 
+void DataSet::shuffle(){
+    srand(time(0));
+    uint n_row=m_inputSet.shape().n_row;
+    std::vector<double> tmp;
+    for(uint i=0;i<n_row;++i){
+        uint i1=rand()%n_row, i2=rand()%n_row;
+        tmp=m_inputSet[i1];
+        m_inputSet.set(m_inputSet[i2], i1);
+        m_inputSet.set(tmp, i2);
+
+        tmp=m_outputSet[i1];
+        m_outputSet.set(m_outputSet[i2], i1);
+        m_outputSet.set(tmp, i2);
+    }
+}
+
+std::vector<DataSet> DataSet::split(const std::initializer_list<double>& percentages) const{
+    std::vector<DataSet> dataSets;
+    DataSet tmp;
+    uint beg=0, end=0;
+
+    for(auto it=percentages.begin();it!=percentages.end();++it){
+        end=beg+(*it)/100*m_inputSet.shape().n_row;
+        tmp=split(beg, end);
+        dataSets.push_back(tmp);
+        beg=end;
+    }
+
+    return dataSets;
+}
+
+DataSet DataSet::split(uint beg, uint end) const{
+    DataSet dataSet;
+
+    dataSet.m_inputSet.set_shape(end-beg, m_inputSet.shape().n_col);
+    dataSet.m_outputSet.set_shape(end-beg, m_inputSet.shape().n_col);
+    for(uint i=0;i<end-beg;++i){
+        for(uint j=0;j<m_inputSet.shape().n_col;++j){
+            dataSet.m_inputSet.set(i, j)=m_inputSet[beg+i][j];
+        }   dataSet.m_outputSet.set(i, 0)=m_outputSet[beg+i][0];
+    }
+
+    return dataSet;
+}
+
 void DataSet::print(uint n){
     std::cout<<"Dataset ["<<m_inputSet.shape()<<"] - ["<<m_outputSet.shape()<<"]: "<<'\n';
-    for(uint i=0;i<n;++i){
+    for(uint i=0;i<n && i<m_inputSet.shape().n_row;++i){
         for(uint j=0;j<m_inputSet.m_shape.n_col;++j){
             std::cout<<m_inputSet.m_vals[i][j]<<",\t\t";
         }
@@ -86,5 +139,5 @@ const std::vector<double>& DataSet::get_input(uint index) const{
 }
 
 const double DataSet::get_output(uint index) const{
-    return m_outputSet[0][index];
+    return m_outputSet[index][0];
 }

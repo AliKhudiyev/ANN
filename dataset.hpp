@@ -20,8 +20,12 @@ class DataSet{
     void save(const std::string& filepath);
     void save();
 
+    static Matrix one_hot_encode(double output, uint n);
     void one_hot_encode();
     const Shape shape() const;
+    void shuffle();
+    std::vector<DataSet> split(const std::initializer_list<double>& percentages) const;
+    DataSet split(uint beg, uint end) const;
     void print(uint n=1);
 
     const std::vector<double>& get_input(uint index) const;

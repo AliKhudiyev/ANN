@@ -35,6 +35,7 @@ class Matrix{
     Matrix(uint n_row, uint n_col);
     ~Matrix();
 
+    friend std::ostream& operator<<(std::ostream& out, const Matrix& matrix);
     static Matrix add(const Matrix& mat1, const Matrix& mat2);
     static Matrix sub(const Matrix& mat1, const Matrix& mat2);
     static Matrix dot(const Matrix& mat1, const Matrix& mat2);
@@ -50,9 +51,13 @@ class Matrix{
     Matrix& mul(double coef);
     Matrix& transpose();
 
+    double& set(uint n_row, uint n_col);
+    void set(const std::vector<double>& vals, uint n_row);
+    std::vector<double> get(uint n_row) const;
     void set_shape(uint n_row, uint n_col);
     const Shape& shape() const;
     void random_init(double beg=-0.01, double end=0.01);
 };
 
 std::ostream& operator<<(std::ostream& out, const Shape& shape);
+std::ostream& operator<<(std::ostream& out, const Matrix& matrix);

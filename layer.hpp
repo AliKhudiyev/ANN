@@ -11,6 +11,7 @@ class Layer{
     Layer()=default;
     ~Layer();
 
+    void initialize(const std::vector<double>& vals);
     const Perceptron& get_perceptron(uint index) const;
     void set_labels(const std::initializer_list<std::string>& labels);
     const std::string& label(uint index) const;
@@ -19,4 +20,5 @@ class Layer{
     void clear();
     unsigned get_nb_perceptrons() const;
     double ffeed_to(uint index);    // next layer perceptron index
+    Matrix get() const;
 };

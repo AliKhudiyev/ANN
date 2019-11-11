@@ -21,6 +21,16 @@ std::ostream& operator<<(std::ostream& out, const Shape& shape){
     return out;
 }
 
+std::ostream& operator<<(std::ostream& out, const Matrix& matrix){
+    for(uint i=0;i<matrix.m_shape.n_row;++i){
+        for(uint j=0;j<matrix.m_shape.n_col;++j){
+            std::cout<<matrix[i][j]<<"\t";
+        }   std::cout<<'\n';
+    }
+
+    return out;
+}
+
 Matrix::Matrix(const Shape& shape){
     set_shape(shape.n_row, shape.n_col);
 }
@@ -152,17 +162,30 @@ Matrix& Matrix::mul(double coef){
 }
 
 Matrix& Matrix::transpose(){
-    double tmp;
+    Matrix transposed(m_shape.n_col, m_shape.n_row);
+    // double tmp;
 
-    for(uint i=0;i<m_shape.n_row;++i){
-        for(uint j=0;j<m_shape.n_col;++j){
-            tmp=m_vals[i][j];
-            m_vals[i][j]=m_vals[j][i];
-            m_vals[j][i]=tmp;
+    for(uint i=0;i<m_shape.n_col;++i){
+        for(uint j=0;j<m_shape.n_row;++j){
+            // tmp=m_vals[i][j];
+            transposed.m_vals[i][j]=m_vals[j][i];
         }
     }
+    m_vals=transposed.m_vals;
 
     return *this;
+}
+
+double& Matrix::set(uint n_row, uint n_col){
+    return m_vals[n_row][n_col];
+}
+
+void Matrix::set(const std::vector<double>& vals, uint n_row){
+    m_vals[n_row]=vals;
+}
+
+std::vector<double> Matrix::get(uint n_row) const{
+    return m_vals[n_row];
 }
 
 void Matrix::set_shape(uint n_row, uint n_col){
@@ -187,7 +210,7 @@ const Shape& Matrix::shape() const{
 void Matrix::random_init(double beg, double end){
     for(auto& vec: m_vals){
         for(auto& val: vec){
-            val=(end-beg)*(double)rand_r(nullptr)/RAND_MAX+beg;
+            val=(end-beg)*(double)rand()/RAND_MAX+beg;
         }
     }
 }
