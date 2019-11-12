@@ -32,9 +32,13 @@ void DataSet::load(const std::string& filepath, uint ignored_lines, bool auto_re
     if(!ignored_lines && !auto_read){
         std::getline(file, line);
         stream<<line;
+        // std::cout<<" dbg first line: "<<line<<'\n';
         while(std::getline(stream, line, ',')){
+            // std::cout<<" dbg token: "<<line<<'\n';
             dims[i++]=std::stoi(line);
+            // std::cout<<" dims #"<<i-1<<": "<<dims[i-1]<<'\n';
         }
+        // std::cout<<" dbg parsed\n";
         m_inputSet.set_shape(dims[0], dims[1]-1);
         m_outputSet.set_shape(dims[0], 1);
         i=0;

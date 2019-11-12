@@ -24,8 +24,8 @@ std::ostream& operator<<(std::ostream& out, const Shape& shape){
 std::ostream& operator<<(std::ostream& out, const Matrix& matrix){
     for(uint i=0;i<matrix.m_shape.n_row;++i){
         for(uint j=0;j<matrix.m_shape.n_col;++j){
-            std::cout<<matrix[i][j]<<"\t";
-        }   std::cout<<'\n';
+            out<<matrix[i][j]<<"\t";
+        }   out<<'\n';
     }
 
     return out;

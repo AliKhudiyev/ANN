@@ -20,7 +20,7 @@ enum LayerType{
 };
 
 typedef class ANN{
-    const double learning_rate=0.0005;
+    const double learning_rate=0.0005;//*0.0005;
 
     private:
     uint m_n_input, m_n_output;
@@ -49,6 +49,7 @@ typedef class ANN{
     void train(uint n_epoch, uint batch_size=-1);
     std::string predict(const std::vector<double>& inputs);
     double accuracy(const DataSet& dataSet);
+    void save(const std::string& filepath) const;
     void print(uint index) const;
     void print(LayerType type) const;
     void print_structure() const;

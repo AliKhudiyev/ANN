@@ -7,7 +7,6 @@ log/
 # Files
 *.o
 *.log
-*.csv
 main.cpp
 
 # Executables

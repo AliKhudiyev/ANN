@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <fstream>
 
 ANN::ANN(uint n_layer, const std::initializer_list<uint>& n_perceptrons){
     auto it=n_perceptrons.begin();
@@ -117,8 +118,8 @@ void ANN::train(DataSet& dataset, uint n_epoch, uint batch_size){
     // std::cout<<" n inputs: "<<m_n_input<<'\n';
     // for(uint i=0;i<m_layers[0].get_nb_perceptrons();++i){
         // std::cout<<"ouput for perceptron"<<i+1<<": "<<m_layers[0].get_perceptron(i).get_output()<<'\n';
-        // std::cout<<"weight for perceptron "<<i+1<<":\n";
-        // std::cout<<m_layers[0].get_perceptron(i).get_weights()<<'\n';
+    //     std::cout<<"weight for perceptron "<<i+1<<":\n";
+    //     std::cout<<m_layers[0].get_perceptron(i).get_weights()<<'\n';
     // }
 
     m_dataSet=&dataset;
@@ -149,7 +150,7 @@ void ANN::train(DataSet& dataset, uint n_epoch, uint batch_size){
                 // std::cout<<" >>> expected output: "<<DataSet::one_hot_encode(m_dataSet->get_output(j*batch_size+k), 2);
 
                 // error=net_error(net_output(m_dataSet->get_input(j*m_batchSize+k))-DataSet::one_hot_encode(m_dataSet->get_output(j*m_batchSize+k), 3));
-                back_propagate(net_output(m_dataSet->get_input(j*m_batchSize+k))-DataSet::one_hot_encode(m_dataSet->get_output(j*m_batchSize+k), 3), 0);
+                back_propagate(net_output(m_dataSet->get_input(j*m_batchSize+k))-DataSet::one_hot_encode(m_dataSet->get_output(j*m_batchSize+k), 2), 0);
 
                 // std::cout<<"bcs real ouput was "<<m_dataSet->get_output(j*m_batchSize+k)<<'\n';
                 // std::cout<<" >>> error: "<<error<<'\n';
@@ -158,6 +159,11 @@ void ANN::train(DataSet& dataset, uint n_epoch, uint batch_size){
             }
             // std::cout<<'\n';
         }
+        // for(uint i=0;i<m_layers[0].get_nb_perceptrons();++i){
+            // std::cout<<"ouput for perceptron"<<i+1<<": "<<m_layers[0].get_perceptron(i).get_output()<<'\n';
+        //     std::cout<<"weight for perceptron "<<i+1<<":\n";
+        //     std::cout<<m_layers[0].get_perceptron(i).get_weights()<<'\n';
+        // }
     }
 
     // std::cout<<" :Done\n";
@@ -195,6 +201,25 @@ double ANN::accuracy(const DataSet& dataSet){
     }
 
     return (double)right_guesses/all_guesses;
+}
+
+void ANN::save(const std::string& filepath) const{
+    uint n_perceptron=0;
+    std::ofstream file(filepath);
+
+    for(uint i=0;i<m_layers.size()-1;++i){
+        n_perceptron=m_layers[i].get_nb_perceptrons();
+        file<<"layer, "<<i<<", "<<n_perceptron<<"\n";
+        // std::cout<<"layer: "<<i<<", "<<n_perceptron<<'\n';
+        for(uint j=0;j<n_perceptron;++j){
+            file<<"perceptron, "<<j<<"\n";
+            // std::cout<<"perceptron: "<<j<<'\n';
+            file<<m_layers[i].get_perceptron(j).get_weights();
+        }
+        file<<'\n';
+    }
+
+    file.close();
 }
 
 void ANN::print(uint index) const{
@@ -280,20 +305,26 @@ double ANN::net_error(const Matrix& error) const{
     double err=0;
 
     for(uint i=0;i<error.shape().n_col;++i){
+        std::cout<<": "<<error[0][i]<<" :";
         err+=0.5*pow(error[0][i], 2);
-    }
+    }   std::cout<<'\n';
 
     return err;
 }
 
 void ANN::back_propagate(const Matrix& error, uint layer_index){
+    // std::cout<<"Error: ";
     for(uint i=0;i<error.shape().n_col;++i){
+        // std::cout<<error[0][i]<<" \n";
         for(uint j=0;j<m_layers[layer_index].get_nb_perceptrons();++j){
-            m_layers[layer_index].get_perceptron(j).get_weights().set(i, 0)-=m_lr*error[0][i]*m_layers[layer_index].get_perceptron(j).get_output();
+            double sign=1;
+            if(error[0][i]<0) sign*=-1;
+            m_layers[layer_index].get_perceptron(j).get_weights().set(i, 0)-=m_lr*sign*m_layers[layer_index].get_perceptron(j).get_output();
             // m_layers[layer_index].get_perceptron(j).get_output()
             // error[0][i]
         }
     }
+    // std::cout<<'\n';
 
 }
 
