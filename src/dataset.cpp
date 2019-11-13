@@ -25,6 +25,11 @@ void DataSet::load(const std::string& filepath, uint ignored_lines, bool auto_re
     std::string line;
     std::ifstream file(filepath);
 
+    if(!file){
+        std::cout<<"ERROR [load file]: Couldn't load the dataset file!\n";
+        exit(1);
+    }
+
     uint dims[2], i=0, j=0, n_lines=0, word_count=0;
     std::vector<double> inputs;
     double val;

@@ -1,0 +1,3 @@
+/home/ali/Desktop/AI/ANN/build/CMakeFiles/rebuild_cache.dir
+/home/ali/Desktop/AI/ANN/build/CMakeFiles/main.dir
+/home/ali/Desktop/AI/ANN/build/CMakeFiles/edit_cache.dir
