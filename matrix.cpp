@@ -214,3 +214,11 @@ void Matrix::random_init(double beg, double end){
         }
     }
 }
+
+std::ostream& Matrix::print_weights(std::ostream& out) const{
+    for(uint i=0;i<m_shape.n_row;++i){
+        out<<m_vals[i][0];
+        if(i!=m_shape.n_row-1) out<<", ";
+    }
+    return out;
+}

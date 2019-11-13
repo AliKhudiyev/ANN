@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cmath>
 #include <fstream>
+#include <sstream>
 
 ANN::ANN(uint n_layer, const std::initializer_list<uint>& n_perceptrons){
     auto it=n_perceptrons.begin();
@@ -203,20 +204,82 @@ double ANN::accuracy(const DataSet& dataSet){
     return (double)right_guesses/all_guesses;
 }
 
+/*
+ * Weight file structure: 
+ * -----------------------
+ * # of layers
+ * # of perceptrons in layer 1
+ * # of weights in perceptron 1 of the current layer (layer 1)
+ * weights
+*/
+
 void ANN::save(const std::string& filepath) const{
-    uint n_perceptron=0;
+    uint n_perceptron=0, n_weights=0;
     std::ofstream file(filepath);
 
+    file<<m_layers.size()-1<<"\n";
     for(uint i=0;i<m_layers.size()-1;++i){
         n_perceptron=m_layers[i].get_nb_perceptrons();
-        file<<"layer, "<<i<<", "<<n_perceptron<<"\n";
+        file<<n_perceptron<<"\n";
+        n_weights=m_layers[i+1].get_nb_perceptrons();
+        file<<n_weights<<"\n";
         // std::cout<<"layer: "<<i<<", "<<n_perceptron<<'\n';
         for(uint j=0;j<n_perceptron;++j){
-            file<<"perceptron, "<<j<<"\n";
+            // file<<"perceptron, "<<j<<"\n";
             // std::cout<<"perceptron: "<<j<<'\n';
-            file<<m_layers[i].get_perceptron(j).get_weights();
+            // file<<m_layers[i].get_perceptron(j).get_weights();
+            m_layers[i].get_perceptron(j).get_weights().print_weights(file);
+            file<<'\n';
         }
-        file<<'\n';
+    }
+
+    file.close();
+}
+
+void ANN::load(const std::string& filepath){
+    std::stringstream stream;
+    std::string line;
+    uint n_perceptron, n_layer, n_weights;
+    Matrix weight;
+    // std::vector<double> vals(1);
+
+    std::ifstream file(filepath);
+
+    std::getline(file, line);
+    n_layer=std::stoi(line);
+
+    if(n_layer!=m_layers.size()-1){
+        std::cout<<"ERROR [weight loading]: Inaccurate # of layers!\n";
+    }
+
+    for(uint i=0;i<n_layer;++i){
+        // std::cout<<"layer "<<i+1<<'\n';
+
+        std::getline(file, line);
+        n_perceptron=std::stoi(line);
+        std::getline(file, line);
+        n_weights=std::stoi(line);
+        weight.set_shape(n_weights, 1);
+        
+        if(n_perceptron!=m_layers[i].get_nb_perceptrons()){
+            std::cout<<"ERROR [weight loading]: Inaccurate # of perceptrons of layer "<<i+1<<'\n';
+        }
+
+        for(uint j=0;j<n_perceptron;++j){
+            // std::cout<<"perceptron "<<j+1<<'\n';
+            std::getline(file, line);
+            stream.clear();
+            stream<<line;
+            for(uint k=0;k<n_weights;++k){
+                std::getline(stream, line, ',');
+                // std::cout<<" > "<<std::stold(line)<<'\n';
+                // vals[0]=std::stold(line);
+                weight.set(k, 0)=std::stold(line);
+            }
+            m_layers[i].get_perceptron(j).set_weights(weight);
+            // m_layers[i].get_perceptron(j).get_weights().print_weights(std::cout)<<'\n';
+            // std::cout<<'\n';
+        }
     }
 
     file.close();

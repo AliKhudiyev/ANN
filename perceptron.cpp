@@ -37,6 +37,10 @@ Matrix& Perceptron::get_weights() const{
     return m_weight;
 }
 
+void Perceptron::set_weights(const Matrix& weight) const{
+    m_weight=weight;
+}
+
 void Perceptron::set_input(double input) const{
     m_in=input;
     activate();

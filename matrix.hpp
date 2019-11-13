@@ -57,6 +57,7 @@ class Matrix{
     void set_shape(uint n_row, uint n_col);
     const Shape& shape() const;
     void random_init(double beg=-0.01, double end=0.01);
+    std::ostream& print_weights(std::ostream& out) const;
 };
 
 std::ostream& operator<<(std::ostream& out, const Shape& shape);
