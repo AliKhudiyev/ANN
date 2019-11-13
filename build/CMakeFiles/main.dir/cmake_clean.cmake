@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/main.dir/src/main.cpp.o"
+  "CMakeFiles/main.dir/src/test.cpp.o"
   "CMakeFiles/main.dir/src/ann.cpp.o"
   "CMakeFiles/main.dir/src/layer.cpp.o"
   "CMakeFiles/main.dir/src/perceptron.cpp.o"

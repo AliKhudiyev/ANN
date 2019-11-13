@@ -68,12 +68,6 @@ layer.hpp
 iostream
 -
 
-/home/ali/Desktop/AI/ANN/src/main.cpp
-iostream
--
-ann.hpp
-/home/ali/Desktop/AI/ANN/src/ann.hpp
-
 /home/ali/Desktop/AI/ANN/src/matrix.cpp
 matrix.hpp
 /home/ali/Desktop/AI/ANN/src/matrix.hpp
@@ -93,6 +87,12 @@ ctime
 -
 iostream
 -
+
+/home/ali/Desktop/AI/ANN/src/test.cpp
+iostream
+-
+ann.hpp
+/home/ali/Desktop/AI/ANN/src/ann.hpp
 
 /home/ali/Desktop/AI/ANN/src/utils.cpp
 vector

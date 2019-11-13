@@ -18,17 +18,17 @@ CMakeFiles/main.dir/src/layer.cpp.o: ../include/matrix.hpp
 CMakeFiles/main.dir/src/layer.cpp.o: ../include/perceptron.hpp
 CMakeFiles/main.dir/src/layer.cpp.o: ../src/layer.cpp
 
-CMakeFiles/main.dir/src/main.cpp.o: ../include/ann.hpp
-CMakeFiles/main.dir/src/main.cpp.o: ../include/dataset.hpp
-CMakeFiles/main.dir/src/main.cpp.o: ../include/layer.hpp
-CMakeFiles/main.dir/src/main.cpp.o: ../include/matrix.hpp
-CMakeFiles/main.dir/src/main.cpp.o: ../include/perceptron.hpp
-CMakeFiles/main.dir/src/main.cpp.o: ../src/main.cpp
-
 CMakeFiles/main.dir/src/matrix.cpp.o: ../include/matrix.hpp
 CMakeFiles/main.dir/src/matrix.cpp.o: ../src/matrix.cpp
 
 CMakeFiles/main.dir/src/perceptron.cpp.o: ../include/matrix.hpp
 CMakeFiles/main.dir/src/perceptron.cpp.o: ../include/perceptron.hpp
 CMakeFiles/main.dir/src/perceptron.cpp.o: ../src/perceptron.cpp
+
+CMakeFiles/main.dir/src/test.cpp.o: ../include/ann.hpp
+CMakeFiles/main.dir/src/test.cpp.o: ../include/dataset.hpp
+CMakeFiles/main.dir/src/test.cpp.o: ../include/layer.hpp
+CMakeFiles/main.dir/src/test.cpp.o: ../include/matrix.hpp
+CMakeFiles/main.dir/src/test.cpp.o: ../include/perceptron.hpp
+CMakeFiles/main.dir/src/test.cpp.o: ../src/test.cpp
 

@@ -18,13 +18,6 @@ CMakeFiles/main.dir/src/layer.cpp.o
  ../include/matrix.hpp
  ../include/perceptron.hpp
  /home/ali/Desktop/AI/ANN/src/layer.cpp
-CMakeFiles/main.dir/src/main.cpp.o
- ../include/ann.hpp
- ../include/dataset.hpp
- ../include/layer.hpp
- ../include/matrix.hpp
- ../include/perceptron.hpp
- /home/ali/Desktop/AI/ANN/src/main.cpp
 CMakeFiles/main.dir/src/matrix.cpp.o
  ../include/matrix.hpp
  /home/ali/Desktop/AI/ANN/src/matrix.cpp
@@ -32,3 +25,10 @@ CMakeFiles/main.dir/src/perceptron.cpp.o
  ../include/matrix.hpp
  ../include/perceptron.hpp
  /home/ali/Desktop/AI/ANN/src/perceptron.cpp
+CMakeFiles/main.dir/src/test.cpp.o
+ ../include/ann.hpp
+ ../include/dataset.hpp
+ ../include/layer.hpp
+ ../include/matrix.hpp
+ ../include/perceptron.hpp
+ /home/ali/Desktop/AI/ANN/src/test.cpp
