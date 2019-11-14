@@ -7,12 +7,12 @@
 #include <fstream>
 #include <sstream>
 
-ANN::ANN(uint n_layer, const std::initializer_list<uint>& n_perceptrons){
+ANN::ANN(const std::initializer_list<uint>& n_perceptrons){
     auto it=n_perceptrons.begin();
     m_n_input=*n_perceptrons.begin();
     m_n_output=*(n_perceptrons.end()-1);
     m_batchSize=-1;
-    for(uint i=0;i<n_layer;++i, ++it){
+    for(auto it=n_perceptrons.begin();it!=n_perceptrons.end();++it){
         Layer layer;
         layer.add_perceptron(*it);
         m_layers.push_back(layer);
@@ -87,6 +87,24 @@ void ANN::insert_layer(uint index, uint n_perceptrons){
     insert_layer(index, layer);
 }
 
+void ANN::insert_layer(const std::initializer_list<uint>& indexes, const std::initializer_list<uint>& n_perceptrons){
+    if(indexes.size()==n_perceptrons.size()){
+        auto index_it=indexes.begin();
+        auto percept_it=n_perceptrons.begin();
+
+        for(;index_it!=indexes.end();++index_it, ++percept_it){
+            insert_layer(*index_it, *percept_it);
+        }
+    }
+}
+
+void ANN::insert_layer(const std::initializer_list<uint>& n_perceptrons){
+    uint i=0;
+    for(auto it=n_perceptrons.begin();it!=n_perceptrons.end();++it){
+        insert_layer(i++, *it);
+    }
+}
+
 void ANN::initialize(double beg, double end){
     
     // std::cout<<" |> initialize\n";
@@ -151,7 +169,7 @@ void ANN::train(DataSet& dataset, uint n_epoch, uint batch_size){
                 // std::cout<<" >>> expected output: "<<DataSet::one_hot_encode(m_dataSet->get_output(j*batch_size+k), 2);
 
                 // error=net_error(net_output(m_dataSet->get_input(j*m_batchSize+k))-DataSet::one_hot_encode(m_dataSet->get_output(j*m_batchSize+k), 3));
-                back_propagate(net_output(m_dataSet->get_input(j*m_batchSize+k))-DataSet::one_hot_encode(m_dataSet->get_output(j*m_batchSize+k), 2), 0);
+                back_propagate(net_output(m_dataSet->get_input(j*m_batchSize+k))-DataSet::one_hot_encode(m_dataSet->get_output(j*m_batchSize+k), 2));
 
                 // std::cout<<"bcs real ouput was "<<m_dataSet->get_output(j*m_batchSize+k)<<'\n';
                 // std::cout<<" >>> error: "<<error<<'\n';
@@ -244,6 +262,10 @@ void ANN::load(const std::string& filepath){
     // std::vector<double> vals(1);
 
     std::ifstream file(filepath);
+
+    if(!file){
+        std::cout<<"ERROR [weight file]: Couldn't load weights!\n";
+    }
 
     std::getline(file, line);
     n_layer=std::stoi(line);
@@ -391,6 +413,9 @@ void ANN::back_propagate(const Matrix& error, uint layer_index){
 
 }
 
-void ANN::back_propagate(double error){
+void ANN::back_propagate(const Matrix& error){
     // for(uint i=0;m_layers.size()-1;++i) back_propagate(error, m_layers.size()-2-i);
+    for(uint i=0;i<m_layers.size()-1;++i){
+        back_propagate(error, i);
+    }
 }

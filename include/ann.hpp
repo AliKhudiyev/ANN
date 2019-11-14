@@ -20,7 +20,7 @@ enum LayerType{
 };
 
 typedef class ANN{
-    const double learning_rate=0.0005*0.0005;
+    const double learning_rate=0.000001; //0.0005*0.0005;
 
     private:
     uint m_n_input, m_n_output;
@@ -32,8 +32,8 @@ typedef class ANN{
     public:
     ANN()=default;
     ANN(uint n_input, uint n_output=1): 
-        ANN(2, {n_input+1, n_output}) {}
-    ANN(uint n_layer, const std::initializer_list<uint>& n_perceptrons);
+        ANN({n_input+1, n_output}) {}
+    ANN(const std::initializer_list<uint>& n_perceptrons);
     ~ANN();
 
     void set_labels(LayerType label_type, const std::initializer_list<std::string>& labels);
@@ -44,6 +44,8 @@ typedef class ANN{
     void add_layer(uint n_layer, const std::initializer_list<uint>& n_perceptrons);
     void insert_layer(uint index, const Layer& layer);
     void insert_layer(uint index, uint n_perceptrons);
+    void insert_layer(const std::initializer_list<uint>& indexes, const std::initializer_list<uint>& n_perceptrons);
+    void insert_layer(const std::initializer_list<uint>& n_perceptrons);
     void initialize(double beg=-0.01, double end=0.01);
     void train(DataSet& dataset, uint n_epoch, uint batch_size=-1);
     void train(uint n_epoch, uint batch_size=-1);
@@ -59,5 +61,5 @@ typedef class ANN{
     Matrix net_output(const std::vector<double>& inputs);
     double net_error(const Matrix& error) const;
     void back_propagate(const Matrix& error, uint layer_index);
-    void back_propagate(double error);
+    void back_propagate(const Matrix& error);
 }NNet, NeuralNet;
