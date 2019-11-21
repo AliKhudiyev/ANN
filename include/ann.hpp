@@ -7,6 +7,7 @@
 #include <initializer_list>
 
 // uint noBatchSize=-1;
+struct Metric;
 
 enum BatchSize{
     None=0,
@@ -20,7 +21,8 @@ enum LayerType{
 };
 
 typedef class ANN{
-    const double learning_rate=0.000001; //0.0005*0.0005;
+    const double learning_rate=0.01; //0.000001; //0.0005*0.0005;
+    friend class Metric;
 
     private:
     uint m_n_input, m_n_output;
@@ -47,8 +49,8 @@ typedef class ANN{
     void insert_layer(const std::initializer_list<uint>& indexes, const std::initializer_list<uint>& n_perceptrons);
     void insert_layer(const std::initializer_list<uint>& n_perceptrons);
     void initialize(double beg=-0.01, double end=0.01);
-    void train(DataSet& dataset, uint n_epoch, uint batch_size=-1);
-    void train(uint n_epoch, uint batch_size=-1);
+    void train(DataSet& dataset, uint n_epoch, uint batch_size=1);
+    void train(uint n_epoch, uint batch_size=1);
     std::string predict(const std::vector<double>& inputs);
     double accuracy(const DataSet& dataSet);
     void save(const std::string& filepath) const;

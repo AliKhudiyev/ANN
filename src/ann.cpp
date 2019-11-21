@@ -132,61 +132,20 @@ void ANN::initialize(double beg, double end){
 }
 
 void ANN::train(DataSet& dataset, uint n_epoch, uint batch_size){
-
-    // std::cout<<" |> train\n";
-    // std::cout<<" n inputs: "<<m_n_input<<'\n';
-    // for(uint i=0;i<m_layers[0].get_nb_perceptrons();++i){
-        // std::cout<<"ouput for perceptron"<<i+1<<": "<<m_layers[0].get_perceptron(i).get_output()<<'\n';
-    //     std::cout<<"weight for perceptron "<<i+1<<":\n";
-    //     std::cout<<m_layers[0].get_perceptron(i).get_weights()<<'\n';
-    // }
-
     m_dataSet=&dataset;
     double error;
-    if(batch_size!=-1) m_batchSize=batch_size;
-    else m_batchSize=m_dataSet->shape().n_row;
-    
-    // std::cout<<" > batch size: "<<m_batchSize<<'\n';
-
+    if(batch_size==0) m_batchSize=m_dataSet->shape().n_row;
+    m_batchSize=batch_size;
     uint n_groups=m_dataSet->shape().n_row/m_batchSize;
 
-    // std::cout<<" > # groups: "<<n_groups<<"\n\n";
-
     for(uint i=0;i<n_epoch;++i){
-
-        // std::cout<<" > epoch "<<i+1<<'\n';
-
         for(uint j=0;j<n_groups;++j){
-
-            // std::cout<<" >> group "<<j+1<<'\n';
-
             for(uint k=0;k<m_batchSize;++k){
-
-                // std::cout<<" >>> === sample index "<<k+1<<'\n';
                 std::vector<double> inp=m_dataSet->get_input(j*batch_size+k);
-                // std::cout<<" >>> inp: ("<<inp[0]<<", "<<inp[1]<<")\n";
-                // std::cout<<" >>> network output: "<<net_output(m_dataSet->get_input(j*batch_size+k));
-                // std::cout<<" >>> expected output: "<<DataSet::one_hot_encode(m_dataSet->get_output(j*batch_size+k), 2);
-
-                // error=net_error(net_output(m_dataSet->get_input(j*m_batchSize+k))-DataSet::one_hot_encode(m_dataSet->get_output(j*m_batchSize+k), 3));
                 back_propagate(net_output(m_dataSet->get_input(j*m_batchSize+k))-DataSet::one_hot_encode(m_dataSet->get_output(j*m_batchSize+k), 2));
-
-                // std::cout<<"bcs real ouput was "<<m_dataSet->get_output(j*m_batchSize+k)<<'\n';
-                // std::cout<<" >>> error: "<<error<<'\n';
-                // std::cout<<'\n';
-
             }
-            // std::cout<<'\n';
         }
-        // for(uint i=0;i<m_layers[0].get_nb_perceptrons();++i){
-            // std::cout<<"ouput for perceptron"<<i+1<<": "<<m_layers[0].get_perceptron(i).get_output()<<'\n';
-        //     std::cout<<"weight for perceptron "<<i+1<<":\n";
-        //     std::cout<<m_layers[0].get_perceptron(i).get_weights()<<'\n';
-        // }
     }
-
-    // std::cout<<" :Done\n";
-
 }
 
 void ANN::train(uint n_epoch, uint batch_size){
@@ -337,16 +296,16 @@ void ANN::print_structure() const{
     for(uint i=0;i<=last_index;++i){
         std::cout<<m_layers[i].get_nb_perceptrons()<<"-";
     }   std::cout<<"|\n";
-    std::cout<<" > Input labels: ";
+    std::cout<<" > Input labels:\n\t";
     for(uint i=0;i<m_layers[0].get_nb_perceptrons();++i){
         std::cout<<m_layers[0].label(i);
         if(i!=m_layers[0].get_nb_perceptrons()-1 &&
-           !m_layers[0].label(i+1).empty()) std::cout<<", ";
+           !m_layers[0].label(i+1).empty()) std::cout<<"\n\t";
     }
-    std::cout<<"\n > Output labels: ";
+    std::cout<<"\n > Output labels:\n\t";
     for(uint i=0;i<m_layers[last_index].get_nb_perceptrons();++i){
         std::cout<<m_layers[last_index].label(i);
-        if(i!=m_layers[last_index].get_nb_perceptrons()-1) std::cout<<", ";
+        if(i!=m_layers[last_index].get_nb_perceptrons()-1) std::cout<<"\n\t";
     }
     std::cout<<"\n > Batch size: ";
     if(m_batchSize!=-1) std::cout<<m_batchSize;

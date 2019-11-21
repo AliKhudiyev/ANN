@@ -8,6 +8,7 @@ int main(){
 
     DataSet iris;
     iris.load("/home/ali/Desktop/AI/ANN/test/heart_kaggle.csv", 0, NAUTOREAD);
+    iris.normalize();
     iris.shuffle();
     // iris.print(1);
 
@@ -25,27 +26,27 @@ int main(){
         });
     net.set_labels(OutputLayer, {"Positive", "Negative"});
 
-    net.set_dataSet(dataSets[0]);
-    net.initialize(-0.01, 0.01);
+    // net.set_dataSet(dataSets[0]);
+    // net.initialize(-0.01, 0.01);
 
-    uint n_epoch;
-    cout<<"# epochs: ";
-    cin>>n_epoch; // 4400
-    net.train(n_epoch);
+    // uint n_epoch;
+    // cout<<"# epochs: ";
+    // cin>>n_epoch; // 4400
+    // net.train(n_epoch, 1);
     
-    cout<<"Accuracy: "<<net.accuracy(dataSets[1])<<'\n';
-    cout<<"Do you want to save the result? [y/n] ";
-    char ans;
-    cin>>ans;
-    if(ans=='y' || ans=='Y'){
-        string filename;
-        cout<<"Enter a file name: ";
-        cin>>filename;
-        net.save(filename);
-    }
+    // cout<<"Accuracy: "<<net.accuracy(dataSets[1])<<'\n';
+    // cout<<"Do you want to save the result? [y/n] ";
+    // char ans;
+    // cin>>ans;
+    // if(ans=='y' || ans=='Y'){
+    //     string filename;
+    //     cout<<"Enter a file name: ";
+    //     cin>>filename;
+    //     net.save(filename);
+    // }
 
-    // net.load("../examples/heart_disease/70l1weights71.csv");
-    // cout<<"Accuracy [71%]: "<<net.accuracy(dataSets[1])<<'\n';
+    net.load("../examples/heart_disease/nweights83.csv");
+    cout<<"Accuracy [83%]: "<<net.accuracy(dataSets[1])<<'\n';
 
     return 0;
 }

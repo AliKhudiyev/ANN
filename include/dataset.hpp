@@ -30,6 +30,7 @@ class DataSet{
     DataSet split(uint beg, uint end) const;
     void print(uint n=1);
     void update();
+    void normalize(double beg=0, double end=1);
 
     const std::vector<double>& get_input(uint index) const;
     const double get_output(uint index) const;

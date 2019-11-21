@@ -190,6 +190,19 @@ void DataSet::update(){
     // std::cout<<"Updated shape: "<<m_inputSet.m_shape<<'\n';
 }
 
+void DataSet::normalize(double beg, double end){
+    for(uint i=0;i<m_inputSet.m_shape.n_col;++i){
+        double min=0, max=0;
+        for(uint j=0;j<m_inputSet.m_shape.n_row;++j){
+            if(max<m_inputSet[j][i]) max=m_inputSet[j][i];
+            if(min>m_inputSet[j][i]) min=m_inputSet[j][i];
+        }
+        for(uint j=0;j<m_inputSet.m_shape.n_row;++j){
+            m_inputSet.set(j, i)=(m_inputSet[j][i]-min)/(max-min);
+        }
+    }
+}
+
 const std::vector<double>& DataSet::get_input(uint index) const{
     return m_inputSet[index];
 }
