@@ -6,15 +6,18 @@
 #include <cmath>
 #include <fstream>
 #include <sstream>
+#include <unistd.h>
 
 ANN::ANN(const std::initializer_list<uint>& n_perceptrons){
     auto it=n_perceptrons.begin();
     m_n_input=*n_perceptrons.begin();
     m_n_output=*(n_perceptrons.end()-1);
-    m_batchSize=-1;
+    m_batchSize=1;
     for(auto it=n_perceptrons.begin();it!=n_perceptrons.end();++it){
         Layer layer;
         layer.add_perceptron(*it);
+        if(it+1!=n_perceptrons.end()) layer.weights().set_shape(*(it+1), *it);
+        layer.weights().random_init(-1., 1.);
         m_layers.push_back(layer);
     }
 }
@@ -106,29 +109,10 @@ void ANN::insert_layer(const std::initializer_list<uint>& n_perceptrons){
 }
 
 void ANN::initialize(double beg, double end){
-    
-    // std::cout<<" |> initialize\n";
-
-    uint n_row;
-    uint n_perceptrons;
-
     srand(time(0));
     for(uint i=0;i<m_layers.size()-1;++i){
-        // std::cout<<" > layer "<<i+1<<'\n';
-        n_perceptrons=m_layers[i].get_nb_perceptrons();
-        n_row=m_layers[i+1].get_nb_perceptrons();
-
-        // std::cout<<" # of perceptrons: "<<n_perceptrons<<'\n';
-        // std::cout<<" # of next layer perceptrons: "<<n_row<<'\n';
-        
-        for(uint j=0;j<n_perceptrons;++j){
-            // std::cout<<" >> perceptron "<<j+1<<'\n';
-            m_layers[i].get_perceptron(j).init_weights(n_row, beg, end);
-        }
+        m_layers[i].weights().random_init(beg, end);
     }
-
-    // std::cout<<" :Done\n";
-
 }
 
 void ANN::train(DataSet& dataset, uint n_epoch, uint batch_size){
@@ -141,10 +125,13 @@ void ANN::train(DataSet& dataset, uint n_epoch, uint batch_size){
     for(uint i=0;i<n_epoch;++i){
         for(uint j=0;j<n_groups;++j){
             for(uint k=0;k<m_batchSize;++k){
-                std::vector<double> inp=m_dataSet->get_input(j*batch_size+k);
-                back_propagate(net_output(m_dataSet->get_input(j*m_batchSize+k))-DataSet::one_hot_encode(m_dataSet->get_output(j*m_batchSize+k), 2));
+                Matrix error=feed_forward(m_dataSet->get_input(j*m_batchSize+k))-DataSet::one_hot_encode(m_dataSet->get_output(j*m_batchSize+k), 2);
+                // std::cout<<"Error: "<<sqrt(pow(error[0][0], 2)+pow(error[0][0], 2))<<'\n';
+                // sleep(0.3);
+                back_propagate(error);
             }
         }
+        if(i%10==0) m_lr/=1.5;
     }
 }
 
@@ -153,7 +140,7 @@ void ANN::train(uint n_epoch, uint batch_size){
 }
 
 std::string ANN::predict(const std::vector<double>& inputs){
-    Matrix output=net_output(inputs);
+    Matrix output=feed_forward(inputs);
     double max=0;
     uint index=0;
 
@@ -174,7 +161,7 @@ double ANN::accuracy(const DataSet& dataSet){
     uint all_guesses=dataSet.shape().n_row;
 
     for(uint i=0;i<all_guesses;++i){
-        if(is_same(net_output(dataSet.get_input(i))[0], DataSet::one_hot_encode(dataSet.get_output(i), 3)[0]))
+        if(is_same(feed_forward(dataSet.get_input(i))[0], DataSet::one_hot_encode(dataSet.get_output(i), 2)[0]))
             ++right_guesses;
     }
 
@@ -194,21 +181,17 @@ void ANN::save(const std::string& filepath) const{
     uint n_perceptron=0, n_weights=0;
     std::ofstream file(filepath);
 
-    file<<m_layers.size()-1<<"\n";
-    for(uint i=0;i<m_layers.size()-1;++i){
-        n_perceptron=m_layers[i].get_nb_perceptrons();
-        file<<n_perceptron<<"\n";
-        n_weights=m_layers[i+1].get_nb_perceptrons();
-        file<<n_weights<<"\n";
-        // std::cout<<"layer: "<<i<<", "<<n_perceptron<<'\n';
-        for(uint j=0;j<n_perceptron;++j){
-            // file<<"perceptron, "<<j<<"\n";
-            // std::cout<<"perceptron: "<<j<<'\n';
-            // file<<m_layers[i].get_perceptron(j).get_weights();
-            m_layers[i].get_perceptron(j).get_weights().print_weights(file);
-            file<<'\n';
-        }
-    }
+    // file<<m_layers.size()-1<<"\n";
+    // for(uint i=0;i<m_layers.size()-1;++i){
+    //     n_perceptron=m_layers[i].get_nb_perceptrons();
+    //     file<<n_perceptron<<"\n";
+    //     n_weights=m_layers[i+1].get_nb_perceptrons();
+    //     file<<n_weights<<"\n";
+    //     for(uint j=0;j<n_perceptron;++j){
+    //         m_layers[i].get_perceptron(j).get_weights().print_weights(file);
+    //         file<<'\n';
+    //     }
+    // }
 
     file.close();
 }
@@ -218,50 +201,44 @@ void ANN::load(const std::string& filepath){
     std::string line;
     uint n_perceptron, n_layer, n_weights;
     Matrix weight;
-    // std::vector<double> vals(1);
 
     std::ifstream file(filepath);
 
-    if(!file){
-        std::cout<<"ERROR [weight file]: Couldn't load weights!\n";
-    }
+    // if(!file){
+    //     std::cout<<"ERROR [weight file]: Couldn't load weights!\n";
+    // }
 
-    std::getline(file, line);
-    n_layer=std::stoi(line);
+    // std::getline(file, line);
+    // n_layer=std::stoi(line);
 
-    if(n_layer!=m_layers.size()-1){
-        std::cout<<"ERROR [weight loading]: Inaccurate # of layers!\n";
-    }
+    // if(n_layer!=m_layers.size()-1){
+    //     std::cout<<"ERROR [weight loading]: Inaccurate # of layers!\n";
+    // }
 
-    for(uint i=0;i<n_layer;++i){
-        // std::cout<<"layer "<<i+1<<'\n';
+    // for(uint i=0;i<n_layer;++i){
+    //     // std::cout<<"layer "<<i+1<<'\n';
 
-        std::getline(file, line);
-        n_perceptron=std::stoi(line);
-        std::getline(file, line);
-        n_weights=std::stoi(line);
-        weight.set_shape(n_weights, 1);
+    //     std::getline(file, line);
+    //     n_perceptron=std::stoi(line);
+    //     std::getline(file, line);
+    //     n_weights=std::stoi(line);
+    //     weight.set_shape(n_weights, 1);
         
-        if(n_perceptron!=m_layers[i].get_nb_perceptrons()){
-            std::cout<<"ERROR [weight loading]: Inaccurate # of perceptrons of layer "<<i+1<<'\n';
-        }
+    //     if(n_perceptron!=m_layers[i].get_nb_perceptrons()){
+    //         std::cout<<"ERROR [weight loading]: Inaccurate # of perceptrons of layer "<<i+1<<'\n';
+    //     }
 
-        for(uint j=0;j<n_perceptron;++j){
-            // std::cout<<"perceptron "<<j+1<<'\n';
-            std::getline(file, line);
-            stream.clear();
-            stream<<line;
-            for(uint k=0;k<n_weights;++k){
-                std::getline(stream, line, ',');
-                // std::cout<<" > "<<std::stold(line)<<'\n';
-                // vals[0]=std::stold(line);
-                weight.set(k, 0)=std::stold(line);
-            }
-            m_layers[i].get_perceptron(j).set_weights(weight);
-            // m_layers[i].get_perceptron(j).get_weights().print_weights(std::cout)<<'\n';
-            // std::cout<<'\n';
-        }
-    }
+    //     for(uint j=0;j<n_perceptron;++j){
+    //         std::getline(file, line);
+    //         stream.clear();
+    //         stream<<line;
+    //         for(uint k=0;k<n_weights;++k){
+    //             std::getline(stream, line, ',');
+    //             weight.set(k, 0)=std::stold(line);
+    //         }
+    //         m_layers[i].weights()=weight;
+    //     }
+    // }
 
     file.close();
 }
@@ -296,6 +273,10 @@ void ANN::print_structure() const{
     for(uint i=0;i<=last_index;++i){
         std::cout<<m_layers[i].get_nb_perceptrons()<<"-";
     }   std::cout<<"|\n";
+    std::cout<<" > Shapes of weights: ";
+    for(uint i=0;i<m_layers.size()-1;++i){
+        std::cout<<m_layers[i].weights().shape().n_row<<"x"<<m_layers[i].weights().shape().n_col<<" | ";
+    }   std::cout<<'\n';
     std::cout<<" > Input labels:\n\t";
     for(uint i=0;i<m_layers[0].get_nb_perceptrons();++i){
         std::cout<<m_layers[0].label(i);
@@ -314,7 +295,6 @@ void ANN::print_structure() const{
     if(m_dataSet){
         std::cout<<"\n > Dataset already exists (First 5 rows):\n";
         m_dataSet->print(5);
-        
     }
     else{
         std::cout<<"\n > Dataset doesn't exist!\n";
@@ -322,58 +302,43 @@ void ANN::print_structure() const{
     std::cout<<"\n= = = = = = = = = = = = = =\n";
 }
 
-Matrix ANN::net_output(const std::vector<double>& inputs){
-    m_layers[0].initialize(inputs);
-    m_layers[0].get_perceptron(m_n_input-1).set_input(1);
-
-    // std::cout<<"\n |> net_output\n";
-
-    for(uint i=0;i<m_layers.size()-1;++i){
-
-        // std::cout<<" > layer "<<i+1<<'\n';
-
-        for(uint j=0;j<m_layers[i+1].get_nb_perceptrons();++j){
-
-            // std::cout<<" >> perceptron "<<j+1<<'\n';
-
-            m_layers[i+1].get_perceptron(j).set_input(m_layers[i].ffeed_to(j));
-        }
-    }
-    
-    // std::cout<<" |:Done\n";
-
-    return m_layers[m_layers.size()-1].get();
-}
-
 double ANN::net_error(const Matrix& error) const{
     double err=0;
 
     for(uint i=0;i<error.shape().n_col;++i){
-        std::cout<<": "<<error[0][i]<<" :";
+        // std::cout<<": "<<error[0][i]<<" :";
         err+=0.5*pow(error[0][i], 2);
-    }   std::cout<<'\n';
+    }   // std::cout<<'\n';
 
     return err;
 }
 
-void ANN::back_propagate(const Matrix& error, uint layer_index){
-    // std::cout<<"Error: ";
-    for(uint i=0;i<error.shape().n_col;++i){
-        // std::cout<<error[0][i]<<" \n";
-        for(uint j=0;j<m_layers[layer_index].get_nb_perceptrons();++j){
-            double sign=1;
-            if(error[0][i]<0) sign*=-1;
-            m_layers[layer_index].get_perceptron(j).get_weights().set(i, 0)-=m_lr*sign*m_layers[layer_index].get_perceptron(j).get_output();
-            // m_layers[layer_index].get_perceptron(j).get_output()
-            // error[0][i]
-        }
+Matrix ANN::feed_forward(const std::vector<double>& inputs){
+    Matrix mat;
+    m_layers[0].equalize(inputs);
+    for(uint i=1;i<m_layers.size();++i){
+        mat=m_layers[i-1].get()*Matrix::transpose(m_layers[i-1].weights());
+        m_layers[i].equalize(mat[0]);
     }
-    // std::cout<<'\n';
+    return m_layers[m_layers.size()-1].get();
+}
 
+void ANN::back_propagate(const Matrix& error, uint layer_index){
+    Matrix mat, tmp;
+    Matrix delta(2, 1);
+    delta.set(0,0)=error[0][0];
+    delta.set(1,0)=error[0][1];
+    for(int i=m_layers.size()-2;i>layer_index;--i){
+        // TO DO: initialize tmp
+        // tmp=Matrix::transpose(m_layers[i].outputs());
+        delta=(Matrix::transpose(m_layers[i].weights())*delta);//.mulew(tmp);
+    }
+    // TO DO: initialize tmp
+    tmp=m_layers[layer_index].outputs();
+    m_layers[layer_index].weights()-=(delta*tmp).mul(m_lr);
 }
 
 void ANN::back_propagate(const Matrix& error){
-    // for(uint i=0;m_layers.size()-1;++i) back_propagate(error, m_layers.size()-2-i);
     for(uint i=0;i<m_layers.size()-1;++i){
         back_propagate(error, i);
     }

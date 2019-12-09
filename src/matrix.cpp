@@ -65,18 +65,22 @@ Matrix Matrix::mul(const Matrix& mat, double coef){
     return result;
 }
 
+Matrix Matrix::mulew(const Matrix& mat1, const Matrix& mat2){
+    Matrix mat=mat1;
+    return mat.mulew(mat2);
+}
+
 Matrix Matrix::transpose(const Matrix& mat){
-    Matrix result=mat;
+    Matrix result(mat.m_shape.n_col, mat.m_shape.n_row);
     double tmp;
 
-    for(uint i=0;i<result.m_shape.n_row;++i){
-        for(uint j=0;j<result.m_shape.n_col;++j){
-            tmp=result.m_vals[i][j];
-            result.m_vals[i][j]=result.m_vals[j][i];
-            result.m_vals[j][i]=tmp;
+    for(uint i=0;i<mat.m_shape.n_row;++i){
+        for(uint j=0;j<mat.m_shape.n_col;++j){
+            // tmp=result.m_vals[i][j];
+            result.m_vals[j][i]=mat.m_vals[i][j];
+            // result.m_vals[j][i]=tmp;
         }
     }
-
     return result;
 }
 
@@ -121,18 +125,29 @@ Matrix Matrix::operator-(const Matrix& mat) const{
 }
 
 Matrix Matrix::operator*(const Matrix& mat) const{
-    if(!m_shape.requal(mat.m_shape)){
+    if(m_shape.n_col!=mat.m_shape.n_row){
         std::cout<<"ERROR [* operator]: Shape doesn't match!\n";
+        std::cout<<m_shape<<" * "<<mat.m_shape<<'\n';
+        exit(1);
     }
-
-    Matrix result(m_shape);
+    Matrix result(m_shape.n_row, mat.m_shape.n_col);
+    // std::cout<<m_shape<<" * "<<mat.m_shape<<" = "<<result.m_shape<<'\n';
     
     for(uint i=0;i<m_shape.n_row;++i){
-        for(uint j=0;j<m_shape.n_col;++j){
-            result.m_vals[i][j]=m_vals[i][j]*mat.m_vals[j][i];
+        for(uint t=0;t<mat.m_shape.n_col;++t){
+            result.m_vals[i][t]=0;
+            // std::cout<<i<<","<<t<<"\n";
+            for(uint j=0;j<m_shape.n_col;++j){
+                if(i>=result.m_shape.n_row || t>=result.m_shape.n_col ||
+                    t>=mat.m_shape.n_col || j>=m_shape.n_col){
+                    std::cout<<"err\n";
+                    exit(1);
+                }
+                result.m_vals[i][t]+=m_vals[i][j]*mat.m_vals[j][t];
+            }
         }
     }
-    
+    // std::cout<<"+\n";
     return result;
 }
 
@@ -158,6 +173,20 @@ Matrix& Matrix::mul(double coef){
         }
     }
 
+    return *this;
+}
+
+Matrix& Matrix::mulew(const Matrix& mat){
+    if(m_shape!=mat.m_shape){
+        std::cout<<"ERROR [element-wise multiplication]: Shapes don't match!\n";
+        exit(1);
+    }
+
+    for(uint i=0;i<m_shape.n_row;++i){
+        for(uint j=0;j<m_shape.n_col;++j){
+            m_vals[i][j]*=mat.m_vals[i][j];
+        }
+    }
     return *this;
 }
 

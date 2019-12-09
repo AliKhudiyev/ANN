@@ -14,33 +14,6 @@ Perceptron::Perceptron(){
 
 Perceptron::~Perceptron(){}
 
-void Perceptron::init_weights(const Shape& shape, double beg, double end) const{
-    
-    // std::cout<<" |> init_weights\n";
-    // std::cout<<" > shape: "<<shape<<'\n';
-
-    m_weight.set_shape(shape.n_row, shape.n_col);
-
-    // std::cout<<" > setting shape\n";
-
-    m_weight.random_init(beg, end);
-
-    // std::cout<<" > random initializement\n";
-    // std::cout<<" :Done\n";
-}
-
-void Perceptron::init_weights(uint n, double beg, double end) const{
-    init_weights(Shape{n,1}, beg, end);
-}
-
-Matrix& Perceptron::get_weights() const{
-    return m_weight;
-}
-
-void Perceptron::set_weights(const Matrix& weight) const{
-    m_weight=weight;
-}
-
 void Perceptron::set_input(double input) const{
     m_in=input;
     activate();
@@ -60,13 +33,6 @@ void Perceptron::set_label(const std::string& label){
 
 const std::string& Perceptron::label() const{
     return m_label;
-}
-
-double Perceptron::mult(uint weight_index){
-
-    // std::cout<<" www: "<<m_weight[weight_index][0]<<'\n';
-
-    return m_out*m_weight[weight_index][0];
 }
 
 void Perceptron::activate() const{

@@ -1,4 +1,4 @@
-# Install script for directory: /home/ali/Desktop/AI/ANN
+# Install script for directory: /home/ali/Desktop/Projects/ANN
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/ali/Desktop/AI/ANN/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/ali/Desktop/Projects/ANN/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

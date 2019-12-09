@@ -13,6 +13,7 @@ class DataSet{
     Matrix m_inputSet, m_outputSet;
     std::string m_filePath;
     std::map<std::string, uint> m_map;
+    // uint m_n_outputs;
 
     public:
     DataSet()=default;

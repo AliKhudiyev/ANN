@@ -42,19 +42,6 @@ unsigned Layer::get_nb_perceptrons() const{
     return m_perceptrons.size();
 }
 
-double Layer::ffeed_to(uint index){
-    double weighted_sum=0.;
-
-    for(uint i=0;i<m_perceptrons.size();++i){
-        weighted_sum+=m_perceptrons[i].mult(index);
-        // std::cout<<"("<<i<<") multed: "<<m_perceptrons[i].mult(index)<<'\n';
-    }
-
-    // std::cout<<"weighted sum: "<<weighted_sum<<'\n';
-
-    return weighted_sum;
-}
-
 Matrix Layer::get() const{
     Matrix mat(1, m_perceptrons.size());
 

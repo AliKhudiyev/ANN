@@ -4,12 +4,12 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/ali/Desktop/AI/ANN/src/ann.cpp" "/home/ali/Desktop/AI/ANN/build/CMakeFiles/main.dir/src/ann.cpp.o"
-  "/home/ali/Desktop/AI/ANN/src/dataset.cpp" "/home/ali/Desktop/AI/ANN/build/CMakeFiles/main.dir/src/dataset.cpp.o"
-  "/home/ali/Desktop/AI/ANN/src/layer.cpp" "/home/ali/Desktop/AI/ANN/build/CMakeFiles/main.dir/src/layer.cpp.o"
-  "/home/ali/Desktop/AI/ANN/src/matrix.cpp" "/home/ali/Desktop/AI/ANN/build/CMakeFiles/main.dir/src/matrix.cpp.o"
-  "/home/ali/Desktop/AI/ANN/src/perceptron.cpp" "/home/ali/Desktop/AI/ANN/build/CMakeFiles/main.dir/src/perceptron.cpp.o"
-  "/home/ali/Desktop/AI/ANN/src/test.cpp" "/home/ali/Desktop/AI/ANN/build/CMakeFiles/main.dir/src/test.cpp.o"
+  "/home/ali/Desktop/Projects/ANN/src/ann.cpp" "/home/ali/Desktop/Projects/ANN/build/CMakeFiles/main.dir/src/ann.cpp.o"
+  "/home/ali/Desktop/Projects/ANN/src/dataset.cpp" "/home/ali/Desktop/Projects/ANN/build/CMakeFiles/main.dir/src/dataset.cpp.o"
+  "/home/ali/Desktop/Projects/ANN/src/layer.cpp" "/home/ali/Desktop/Projects/ANN/build/CMakeFiles/main.dir/src/layer.cpp.o"
+  "/home/ali/Desktop/Projects/ANN/src/matrix.cpp" "/home/ali/Desktop/Projects/ANN/build/CMakeFiles/main.dir/src/matrix.cpp.o"
+  "/home/ali/Desktop/Projects/ANN/src/perceptron.cpp" "/home/ali/Desktop/Projects/ANN/build/CMakeFiles/main.dir/src/perceptron.cpp.o"
+  "/home/ali/Desktop/Projects/ANN/src/test.cpp" "/home/ali/Desktop/Projects/ANN/build/CMakeFiles/main.dir/src/test.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

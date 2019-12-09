@@ -21,14 +21,14 @@ enum LayerType{
 };
 
 typedef class ANN{
-    const double learning_rate=0.01; //0.000001; //0.0005*0.0005;
+    const double learning_rate=0.01;
     friend class Metric;
 
     private:
     uint m_n_input, m_n_output;
     std::vector<Layer> m_layers;
     DataSet* m_dataSet=nullptr;
-    uint m_batchSize=-1;
+    uint m_batchSize=1;
     double m_lr=learning_rate;
 
     public:
@@ -60,8 +60,8 @@ typedef class ANN{
     void print_structure() const;
     
     private:
-    Matrix net_output(const std::vector<double>& inputs);
     double net_error(const Matrix& error) const;
+    Matrix feed_forward(const std::vector<double>& inputs);
     void back_propagate(const Matrix& error, uint layer_index);
     void back_propagate(const Matrix& error);
 }NNet, NeuralNet;

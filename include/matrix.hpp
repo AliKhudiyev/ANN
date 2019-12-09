@@ -40,6 +40,7 @@ class Matrix{
     static Matrix sub(const Matrix& mat1, const Matrix& mat2);
     static Matrix dot(const Matrix& mat1, const Matrix& mat2);
     static Matrix mul(const Matrix& mat, double coef);
+    static Matrix mulew(const Matrix& mat1, const Matrix& mat2);
     static Matrix transpose(const Matrix& mat);
     const std::vector<double>& operator[](uint index) const;
     Matrix operator+(const Matrix& mat) const;
@@ -49,6 +50,7 @@ class Matrix{
     Matrix& operator-=(const Matrix& mat);
     Matrix& operator*=(const Matrix& mat);
     Matrix& mul(double coef);
+    Matrix& mulew(const Matrix& mat);
     Matrix& transpose();
 
     double& set(uint n_row, uint n_col);
