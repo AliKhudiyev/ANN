@@ -36,23 +36,9 @@ matrix.hpp
 functional
 -
 
-/home/ali/Desktop/Projects/ANN/src/ann.cpp
-ann.hpp
-/home/ali/Desktop/Projects/ANN/src/ann.hpp
-utils.cpp
-/home/ali/Desktop/Projects/ANN/src/utils.cpp
+/home/ali/Desktop/Projects/ANN/src/test.cpp
 iostream
 -
-cmath
--
-fstream
--
-sstream
--
-unistd.h
--
-
-/home/ali/Desktop/Projects/ANN/src/utils.cpp
-vector
--
+ann.hpp
+/home/ali/Desktop/Projects/ANN/src/ann.hpp
 

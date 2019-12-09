@@ -6,7 +6,9 @@
 
 #include <initializer_list>
 
-// uint noBatchSize=-1;
+#define REINITIALIZE    true
+#define INITIALIZE      false
+
 struct Metric;
 
 enum BatchSize{
@@ -54,7 +56,7 @@ typedef class ANN{
     std::string predict(const std::vector<double>& inputs);
     double accuracy(const DataSet& dataSet);
     void save(const std::string& filepath) const;
-    void load(const std::string& filepath);
+    void load(const std::string& filepath, bool reinitialize=true);
     void print(uint index) const;
     void print(LayerType type) const;
     void print_structure() const;

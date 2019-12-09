@@ -126,12 +126,12 @@ void ANN::train(DataSet& dataset, uint n_epoch, uint batch_size){
         for(uint j=0;j<n_groups;++j){
             for(uint k=0;k<m_batchSize;++k){
                 Matrix error=feed_forward(m_dataSet->get_input(j*m_batchSize+k))-DataSet::one_hot_encode(m_dataSet->get_output(j*m_batchSize+k), 2);
-                // std::cout<<"Error: "<<sqrt(pow(error[0][0], 2)+pow(error[0][0], 2))<<'\n';
+                // std::cout<<"Error: "<<net_error(error)<<'\n';
                 // sleep(0.3);
                 back_propagate(error);
             }
         }
-        if(i%10==0) m_lr/=1.5;
+        if(i%20==0) m_lr/=2;
     }
 }
 
@@ -170,6 +170,8 @@ double ANN::accuracy(const DataSet& dataSet){
 
 /*
  * Weight file structure: 
+ * Name: [training set %]l[# of layers]weights[accuracy %].csv
+ * i.e. 70l3weights83.csv
  * -----------------------
  * # of layers
  * # of perceptrons in layer 1
@@ -181,64 +183,54 @@ void ANN::save(const std::string& filepath) const{
     uint n_perceptron=0, n_weights=0;
     std::ofstream file(filepath);
 
-    // file<<m_layers.size()-1<<"\n";
-    // for(uint i=0;i<m_layers.size()-1;++i){
-    //     n_perceptron=m_layers[i].get_nb_perceptrons();
-    //     file<<n_perceptron<<"\n";
-    //     n_weights=m_layers[i+1].get_nb_perceptrons();
-    //     file<<n_weights<<"\n";
-    //     for(uint j=0;j<n_perceptron;++j){
-    //         m_layers[i].get_perceptron(j).get_weights().print_weights(file);
-    //         file<<'\n';
-    //     }
-    // }
+    file<<m_layers.size()<<'\n';
+    for(uint i=0;i<m_layers.size();++i){
+        file<<m_layers[i].get_nb_perceptrons()<<", ";
+    }
+    for(uint i=0;i<m_layers.size()-1;++i){
+        file<<'\n';
+        m_layers[i].weights().print_weights(file);
+    }
 
     file.close();
 }
 
-void ANN::load(const std::string& filepath){
+void ANN::load(const std::string& filepath, bool reinitialize){
     std::stringstream stream;
     std::string line;
-    uint n_perceptron, n_layer, n_weights;
+    uint n_layer;
+    std::vector<uint> n_perceptrons, n_weights;
     Matrix weight;
 
     std::ifstream file(filepath);
 
-    // if(!file){
-    //     std::cout<<"ERROR [weight file]: Couldn't load weights!\n";
-    // }
+    if(!file){
+        std::cout<<"ERROR [weight file]: Couldn't load weights!\n";
+        exit(1);
+    }
 
-    // std::getline(file, line);
-    // n_layer=std::stoi(line);
+    std::getline(file, line);
+    n_layer=std::stoi(line);
+    n_perceptrons.resize(n_layer);
 
-    // if(n_layer!=m_layers.size()-1){
-    //     std::cout<<"ERROR [weight loading]: Inaccurate # of layers!\n";
-    // }
+    if(reinitialize) m_layers.clear();
+    for(uint i=0;i<n_layer;++i){
+        std::getline(file, line, ',');
+        n_perceptrons[i]=std::stoi(line);
+        if(reinitialize) insert_layer(i, n_perceptrons[i]);
+    }
 
-    // for(uint i=0;i<n_layer;++i){
-    //     // std::cout<<"layer "<<i+1<<'\n';
-
-    //     std::getline(file, line);
-    //     n_perceptron=std::stoi(line);
-    //     std::getline(file, line);
-    //     n_weights=std::stoi(line);
-    //     weight.set_shape(n_weights, 1);
-        
-    //     if(n_perceptron!=m_layers[i].get_nb_perceptrons()){
-    //         std::cout<<"ERROR [weight loading]: Inaccurate # of perceptrons of layer "<<i+1<<'\n';
-    //     }
-
-    //     for(uint j=0;j<n_perceptron;++j){
-    //         std::getline(file, line);
-    //         stream.clear();
-    //         stream<<line;
-    //         for(uint k=0;k<n_weights;++k){
-    //             std::getline(stream, line, ',');
-    //             weight.set(k, 0)=std::stold(line);
-    //         }
-    //         m_layers[i].weights()=weight;
-    //     }
-    // }
+    for(uint i=0;i<n_layer-1;++i){
+        if(reinitialize){
+            m_layers[i].weights().set_shape(n_perceptrons[i+1], n_perceptrons[i]);
+        }
+        for(uint j=0;j<n_perceptrons[i+1];++j){
+            for(uint k=0;k<n_perceptrons[i];++k){
+                std::getline(file, line, ',');
+                m_layers[i].weights().set(j, k)=std::stod(line);
+            }   std::getline(file, line);
+        }
+    }
 
     file.close();
 }
