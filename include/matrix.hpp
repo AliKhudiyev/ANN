@@ -59,6 +59,12 @@ class Matrix{
     void set_shape(uint n_row, uint n_col);
     const Shape& shape() const;
     void random_init(double beg=-0.01, double end=0.01);
+    void init(double value=1.){
+        for(auto& vec: m_vals){
+            for(auto& val: vec)
+                val=value;
+        }
+    }
     std::ostream& print_weights(std::ostream& out) const;
 };
 

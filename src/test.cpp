@@ -46,8 +46,8 @@ int main(int argc, char* argv[]){
     //     nnet.save(filename);
     // }
 
-    nnet.load("../examples/heart_disease/60l3weights83.csv");
-    cout<<"Accuracy [83%]: "<<nnet.accuracy(dataSets[1])<<'\n';
+    nnet.load("../examples/heart_disease/60l3weights85.csv");
+    cout<<"Accuracy [85%]: "<<nnet.accuracy(dataSets[1])<<'\n';
 
     // Argument arg("sm:", argc, argv);
     // cout<<"[m] value: "<<arg.get_option_value('m')<<endl;

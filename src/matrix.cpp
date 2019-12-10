@@ -72,13 +72,10 @@ Matrix Matrix::mulew(const Matrix& mat1, const Matrix& mat2){
 
 Matrix Matrix::transpose(const Matrix& mat){
     Matrix result(mat.m_shape.n_col, mat.m_shape.n_row);
-    double tmp;
 
     for(uint i=0;i<mat.m_shape.n_row;++i){
         for(uint j=0;j<mat.m_shape.n_col;++j){
-            // tmp=result.m_vals[i][j];
             result.m_vals[j][i]=mat.m_vals[i][j];
-            // result.m_vals[j][i]=tmp;
         }
     }
     return result;
@@ -87,6 +84,7 @@ Matrix Matrix::transpose(const Matrix& mat){
 const std::vector<double>& Matrix::operator[](uint index) const{
     if(index>=m_shape.n_row){
         std::cout<<"ERROR [[] operator]: Index out of bounds!\n";
+        exit(1);
     }
 
     return m_vals[index];
@@ -95,6 +93,7 @@ const std::vector<double>& Matrix::operator[](uint index) const{
 Matrix Matrix::operator+(const Matrix& mat) const{
     if(m_shape!=mat.m_shape){
         std::cout<<"ERROR [+ operator]: Shape doesn't match!\n";
+        exit(1);
     }
 
     Matrix result(m_shape);
@@ -111,6 +110,7 @@ Matrix Matrix::operator+(const Matrix& mat) const{
 Matrix Matrix::operator-(const Matrix& mat) const{
     if(m_shape!=mat.m_shape){
         std::cout<<"ERROR [- operator]: Shape doesn't match!\n";
+        exit(1);
     }
 
     Matrix result(m_shape);
@@ -127,22 +127,14 @@ Matrix Matrix::operator-(const Matrix& mat) const{
 Matrix Matrix::operator*(const Matrix& mat) const{
     if(m_shape.n_col!=mat.m_shape.n_row){
         std::cout<<"ERROR [* operator]: Shape doesn't match!\n";
-        std::cout<<m_shape<<" * "<<mat.m_shape<<'\n';
         exit(1);
     }
     Matrix result(m_shape.n_row, mat.m_shape.n_col);
-    // std::cout<<m_shape<<" * "<<mat.m_shape<<" = "<<result.m_shape<<'\n';
     
     for(uint i=0;i<m_shape.n_row;++i){
         for(uint t=0;t<mat.m_shape.n_col;++t){
             result.m_vals[i][t]=0;
-            // std::cout<<i<<","<<t<<"\n";
             for(uint j=0;j<m_shape.n_col;++j){
-                if(i>=result.m_shape.n_row || t>=result.m_shape.n_col ||
-                    t>=mat.m_shape.n_col || j>=m_shape.n_col){
-                    std::cout<<"err\n";
-                    exit(1);
-                }
                 result.m_vals[i][t]+=m_vals[i][j]*mat.m_vals[j][t];
             }
         }
@@ -218,6 +210,7 @@ std::vector<double> Matrix::get(uint n_row) const{
 }
 
 void Matrix::set_shape(uint n_row, uint n_col){
+    static uint count=0;
     if(m_shape!=Shape{0,0}){
         for(auto& vec: m_vals)
             vec.clear();
@@ -228,8 +221,11 @@ void Matrix::set_shape(uint n_row, uint n_col){
     m_shape.n_col=n_col;
 
     m_vals.resize(n_row);
-    for(auto& vec: m_vals)
+    for(auto& vec: m_vals){
         vec.resize(n_col);
+        for(auto& val: vec)
+            val=0.;
+    }
 }
 
 const Shape& Matrix::shape() const{

@@ -16,8 +16,12 @@ ANN::ANN(const std::initializer_list<uint>& n_perceptrons){
     for(auto it=n_perceptrons.begin();it!=n_perceptrons.end();++it){
         Layer layer;
         layer.add_perceptron(*it);
-        if(it+1!=n_perceptrons.end()) layer.weights().set_shape(*(it+1), *it);
-        layer.weights().random_init(-1., 1.);
+        if(it+1!=n_perceptrons.end()){
+            layer.weights().set_shape(*(it+1), *it);
+            layer.weights().random_init(-1., 1.);
+            layer.biases().set_shape(1, *(it+1));
+            layer.biases().random_init(-1., 1.);
+        }
         m_layers.push_back(layer);
     }
 }
@@ -159,7 +163,7 @@ std::string ANN::predict(const std::vector<double>& inputs){
 double ANN::accuracy(const DataSet& dataSet){
     uint right_guesses=0;
     uint all_guesses=dataSet.shape().n_row;
-
+    
     for(uint i=0;i<all_guesses;++i){
         if(is_same(feed_forward(dataSet.get_input(i))[0], DataSet::one_hot_encode(dataSet.get_output(i), 2)[0]))
             ++right_guesses;
@@ -190,6 +194,7 @@ void ANN::save(const std::string& filepath) const{
     for(uint i=0;i<m_layers.size()-1;++i){
         file<<'\n';
         m_layers[i].weights().print_weights(file);
+        m_layers[i].biases().print_weights(file);
     }
 
     file.close();
@@ -223,13 +228,18 @@ void ANN::load(const std::string& filepath, bool reinitialize){
     for(uint i=0;i<n_layer-1;++i){
         if(reinitialize){
             m_layers[i].weights().set_shape(n_perceptrons[i+1], n_perceptrons[i]);
+            m_layers[i].biases().set_shape(1, n_perceptrons[i+1]);
         }
         for(uint j=0;j<n_perceptrons[i+1];++j){
             for(uint k=0;k<n_perceptrons[i];++k){
                 std::getline(file, line, ',');
                 m_layers[i].weights().set(j, k)=std::stod(line);
-            }   std::getline(file, line);
+            }
         }
+        for(uint k=0;k<n_perceptrons[i+1];++k){
+            std::getline(file, line, ',');
+            m_layers[i].biases().set(0, k)=std::stod(line);
+        }   std::getline(file, line);
     }
 
     file.close();
@@ -295,12 +305,11 @@ void ANN::print_structure() const{
 }
 
 double ANN::net_error(const Matrix& error) const{
-    double err=0;
+    double err=0.;
 
     for(uint i=0;i<error.shape().n_col;++i){
-        // std::cout<<": "<<error[0][i]<<" :";
         err+=0.5*pow(error[0][i], 2);
-    }   // std::cout<<'\n';
+    }
 
     return err;
 }
@@ -308,18 +317,19 @@ double ANN::net_error(const Matrix& error) const{
 Matrix ANN::feed_forward(const std::vector<double>& inputs){
     Matrix mat;
     m_layers[0].equalize(inputs);
+
     for(uint i=1;i<m_layers.size();++i){
-        mat=m_layers[i-1].get()*Matrix::transpose(m_layers[i-1].weights());
+        mat=m_layers[i-1].outputs()*Matrix::transpose(m_layers[i-1].weights());
+        mat+=m_layers[i-1].biases();
         m_layers[i].equalize(mat[0]);
     }
-    return m_layers[m_layers.size()-1].get();
+
+    return m_layers[m_layers.size()-1].outputs();
 }
 
 void ANN::back_propagate(const Matrix& error, uint layer_index){
     Matrix mat, tmp;
-    Matrix delta(2, 1);
-    delta.set(0,0)=error[0][0];
-    delta.set(1,0)=error[0][1];
+    Matrix delta=Matrix::transpose(error);
     for(int i=m_layers.size()-2;i>layer_index;--i){
         // TO DO: initialize tmp
         // tmp=Matrix::transpose(m_layers[i].outputs());
@@ -328,6 +338,7 @@ void ANN::back_propagate(const Matrix& error, uint layer_index){
     // TO DO: initialize tmp
     tmp=m_layers[layer_index].outputs();
     m_layers[layer_index].weights()-=(delta*tmp).mul(m_lr);
+    m_layers[layer_index].biases()-=Matrix::transpose(delta).mul(m_lr);
 }
 
 void ANN::back_propagate(const Matrix& error){

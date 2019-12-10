@@ -2,11 +2,13 @@
 #pragma once
 
 #include "perceptron.hpp"
+#include <iostream>
 
 class Layer{
     private:
     std::vector<Perceptron> m_perceptrons;
     mutable Matrix m_weights;
+    mutable Matrix m_biases;
 
     public:
     Layer()=default;
@@ -14,6 +16,13 @@ class Layer{
 
     void initialize(const std::vector<double>& vals);
     void equalize(const std::vector<double>& inputs){
+        if(inputs.size()!=m_perceptrons.size()){
+            std::cout<<" >>> bug!\n";
+            exit(1);
+        }
+        // else{
+            // std::cout<<"Input and perceptron size: "<<inputs.size()<<"\n\n";
+        // }
         for(uint i=0;i<m_perceptrons.size();++i){
             m_perceptrons[i].set_input(inputs[i]);
         }
@@ -40,5 +49,8 @@ class Layer{
     }
     Matrix& weights() const{
         return m_weights;
+    }
+    Matrix& biases() const{
+        return m_biases;
     }
 };
