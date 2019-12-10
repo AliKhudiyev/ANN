@@ -3,6 +3,7 @@
 obj/
 test/
 log/
+CMakeFiles/
 
 # Files
 *.o

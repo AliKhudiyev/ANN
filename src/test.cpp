@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "ann.hpp"
+#include "argparser.hpp"
 
 using namespace std;
 
@@ -47,6 +48,9 @@ int main(int argc, char* argv[]){
 
     nnet.load("../examples/heart_disease/60l3weights83.csv");
     cout<<"Accuracy [83%]: "<<nnet.accuracy(dataSets[1])<<'\n';
+
+    // Argument arg("sm:", argc, argv);
+    // cout<<"[m] value: "<<arg.get_option_value('m')<<endl;
 
     return 0;
 }

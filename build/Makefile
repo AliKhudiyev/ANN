@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named ann
+
+# Build rule for target.
+ann: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ann
+.PHONY : ann
+
+# fast build rule for target.
+ann/fast:
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/build
+.PHONY : ann/fast
+
+#=============================================================================
 # Target rules for targets named main
 
 # Build rule for target.
@@ -129,7 +142,7 @@ src/ann.o: src/ann.cpp.o
 
 # target to build an object file
 src/ann.cpp.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/ann.cpp.o
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/ann.cpp.o
 .PHONY : src/ann.cpp.o
 
 src/ann.i: src/ann.cpp.i
@@ -138,7 +151,7 @@ src/ann.i: src/ann.cpp.i
 
 # target to preprocess a source file
 src/ann.cpp.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/ann.cpp.i
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/ann.cpp.i
 .PHONY : src/ann.cpp.i
 
 src/ann.s: src/ann.cpp.s
@@ -147,7 +160,7 @@ src/ann.s: src/ann.cpp.s
 
 # target to generate assembly for a file
 src/ann.cpp.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/ann.cpp.s
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/ann.cpp.s
 .PHONY : src/ann.cpp.s
 
 src/dataset.o: src/dataset.cpp.o
@@ -156,7 +169,7 @@ src/dataset.o: src/dataset.cpp.o
 
 # target to build an object file
 src/dataset.cpp.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/dataset.cpp.o
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/dataset.cpp.o
 .PHONY : src/dataset.cpp.o
 
 src/dataset.i: src/dataset.cpp.i
@@ -165,7 +178,7 @@ src/dataset.i: src/dataset.cpp.i
 
 # target to preprocess a source file
 src/dataset.cpp.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/dataset.cpp.i
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/dataset.cpp.i
 .PHONY : src/dataset.cpp.i
 
 src/dataset.s: src/dataset.cpp.s
@@ -174,7 +187,7 @@ src/dataset.s: src/dataset.cpp.s
 
 # target to generate assembly for a file
 src/dataset.cpp.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/dataset.cpp.s
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/dataset.cpp.s
 .PHONY : src/dataset.cpp.s
 
 src/layer.o: src/layer.cpp.o
@@ -183,7 +196,7 @@ src/layer.o: src/layer.cpp.o
 
 # target to build an object file
 src/layer.cpp.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/layer.cpp.o
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/layer.cpp.o
 .PHONY : src/layer.cpp.o
 
 src/layer.i: src/layer.cpp.i
@@ -192,7 +205,7 @@ src/layer.i: src/layer.cpp.i
 
 # target to preprocess a source file
 src/layer.cpp.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/layer.cpp.i
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/layer.cpp.i
 .PHONY : src/layer.cpp.i
 
 src/layer.s: src/layer.cpp.s
@@ -201,7 +214,7 @@ src/layer.s: src/layer.cpp.s
 
 # target to generate assembly for a file
 src/layer.cpp.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/layer.cpp.s
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/layer.cpp.s
 .PHONY : src/layer.cpp.s
 
 src/matrix.o: src/matrix.cpp.o
@@ -210,7 +223,7 @@ src/matrix.o: src/matrix.cpp.o
 
 # target to build an object file
 src/matrix.cpp.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/matrix.cpp.o
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/matrix.cpp.o
 .PHONY : src/matrix.cpp.o
 
 src/matrix.i: src/matrix.cpp.i
@@ -219,7 +232,7 @@ src/matrix.i: src/matrix.cpp.i
 
 # target to preprocess a source file
 src/matrix.cpp.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/matrix.cpp.i
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/matrix.cpp.i
 .PHONY : src/matrix.cpp.i
 
 src/matrix.s: src/matrix.cpp.s
@@ -228,7 +241,7 @@ src/matrix.s: src/matrix.cpp.s
 
 # target to generate assembly for a file
 src/matrix.cpp.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/matrix.cpp.s
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/matrix.cpp.s
 .PHONY : src/matrix.cpp.s
 
 src/perceptron.o: src/perceptron.cpp.o
@@ -237,7 +250,7 @@ src/perceptron.o: src/perceptron.cpp.o
 
 # target to build an object file
 src/perceptron.cpp.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/perceptron.cpp.o
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/perceptron.cpp.o
 .PHONY : src/perceptron.cpp.o
 
 src/perceptron.i: src/perceptron.cpp.i
@@ -246,7 +259,7 @@ src/perceptron.i: src/perceptron.cpp.i
 
 # target to preprocess a source file
 src/perceptron.cpp.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/perceptron.cpp.i
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/perceptron.cpp.i
 .PHONY : src/perceptron.cpp.i
 
 src/perceptron.s: src/perceptron.cpp.s
@@ -255,7 +268,7 @@ src/perceptron.s: src/perceptron.cpp.s
 
 # target to generate assembly for a file
 src/perceptron.cpp.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/perceptron.cpp.s
+	$(MAKE) -f CMakeFiles/ann.dir/build.make CMakeFiles/ann.dir/src/perceptron.cpp.s
 .PHONY : src/perceptron.cpp.s
 
 src/test.o: src/test.cpp.o
@@ -292,8 +305,9 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... main"
 	@echo "... edit_cache"
+	@echo "... ann"
+	@echo "... main"
 	@echo "... src/ann.o"
 	@echo "... src/ann.i"
 	@echo "... src/ann.s"
